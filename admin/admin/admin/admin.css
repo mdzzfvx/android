@@ -1,0 +1,35 @@
+body{
+  font-family:Poppins;
+  background:#020615;
+  color:#fff;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+
+#login, #panel{
+  background:rgba(0,30,80,.6);
+  padding:30px;
+  border-radius:16px;
+  box-shadow:0 0 40px #00eaff;
+  text-align:center;
+}
+
+input, select, button{
+  width:100%;
+  padding:12px;
+  margin:8px 0;
+  border:none;
+  border-radius:10px;
+}
+
+button{
+  background:linear-gradient(45deg,#0066ff,#00eaff);
+  color:#fff;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.hidden{display:none}
+.box{margin:10px 0}
