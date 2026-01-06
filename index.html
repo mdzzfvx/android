@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>mdzzxiters store — Android Panel Area</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- PWA -->
+<link rel="manifest" href="data:application/manifest+json,{
+  &quot;name&quot;:&quot;mdzzxiters store&quot;,
+  &quot;short_name&quot;:&quot;mdzzxiters&quot;,
+  &quot;start_url&quot;:&quot;.&quot;,
+  &quot;display&quot;:&quot;standalone&quot;,
+  &quot;background_color&quot;:&quot;#020615&quot;,
+  &quot;theme_color&quot;:&quot;#00eaff&quot;
+}">
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --b:#00eaff;
+  --b2:#005bff;
+  --bg:#020615;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:Poppins,sans-serif;
+  color:#fff;
+  background:
+    radial-gradient(circle at 10% 10%,#00eaff55,transparent 35%),
+    radial-gradient(circle at 90% 90%,#005bff55,transparent 35%),
+    #020615;
+  animation:bgPulse 6s infinite alternate;
+  overflow-x:hidden;
+}
+@keyframes bgPulse{to{filter:brightness(1.1) saturate(1.15)}}
+
+/* WATERMARK */
+body::after{
+  content:"mdzzxiters © 2023";
+  position:fixed;
+  bottom:8px;
+  right:10px;
+  font-size:10px;
+  opacity:.25;
+  pointer-events:none;
+}
+
+/* LOADING */
+#loading{
+  position:fixed;inset:0;background:#020615;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:9999;animation:hide 3s forwards;animation-delay:3s
+}
+#loading h1{
+  font-family:Orbitron;font-size:44px;color:var(--b);
+  text-shadow:0 0 40px var(--b);animation:pulse 1.3s infinite
+}
+.loader{
+  width:64px;height:64px;border:4px solid #00eaff33;
+  border-top:4px solid var(--b);border-radius:50%;
+  margin-top:18px;animation:spin 1s linear infinite
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{50%{text-shadow:0 0 90px var(--b)}}
+@keyframes hide{to{opacity:0;visibility:hidden}}
+
+/* CANVAS */
+canvas{position:fixed;inset:0;z-index:-1}
+
+/* HEADER */
+header{text-align:center;padding:26px}
+header h1{
+  font-family:Orbitron;font-size:36px;color:var(--b);
+  text-shadow:0 0 30px var(--b)
+}
+.badge{
+  background:linear-gradient(45deg,#00eaff,#005bff);
+  padding:4px 10px;border-radius:999px;
+  font-size:11px;font-weight:800;
+  box-shadow:0 0 25px var(--b)
+}
+.meta{
+  display:flex;gap:16px;justify-content:center;
+  margin-top:10px;font-size:13px;color:#9be7ff
+}
+
+/* HERO */
+.hero{text-align:center;padding:40px 20px}
+.hero h2{font-size:30px}
+.hero span{color:var(--b)}
+
+/* PRODUCTS */
+.products{
+  display:flex;gap:28px;justify-content:center;
+  flex-wrap:wrap;padding:30px 16px
+}
+.card{
+  width:320px;
+  background:rgba(8,35,120,.55);
+  backdrop-filter:blur(18px);
+  border-radius:22px;
+  padding:26px;
+  position:relative;
+  box-shadow:0 0 60px rgba(0,230,255,.45);
+  transition:.5s
+}
+.card:hover{
+  transform:translateY(-14px) scale(1.07);
+  box-shadow:0 0 120px rgba(0,240,255,.9)
+}
+.card h3{font-family:Orbitron;color:var(--b)}
+.label{
+  position:absolute;top:14px;right:14px;
+  background:linear-gradient(45deg,#00eaff,#005bff);
+  padding:5px 12px;border-radius:20px;
+  font-size:11px;font-weight:800;
+  box-shadow:0 0 30px var(--b)
+}
+.stars{color:#00eaff;text-shadow:0 0 14px #00eaff;margin:6px 0}
+.price{font-size:20px;font-weight:700;margin:8px 0}
+ul{margin:12px 0}
+li{
+  list-style:none;font-size:14px;margin:6px 0;
+  padding-left:22px;position:relative
+}
+li::before{
+  content:"";position:absolute;left:0;top:6px;
+  width:10px;height:10px;border-radius:50%;
+  background:var(--b);box-shadow:0 0 12px var(--b)
+}
+button{
+  width:100%;padding:14px;border:none;border-radius:14px;
+  background:linear-gradient(45deg,#005bff,#00eaff);
+  color:#fff;font-weight:800;
+  cursor:pointer;transition:.25s;
+  position:relative;overflow:hidden
+}
+button:hover{box-shadow:0 0 40px var(--b);transform:scale(1.06)}
+.premium{border:2px solid #00f0ff;box-shadow:0 0 140px #00f0ff}
+
+/* NEON BURST */
+.burst{
+  position:absolute;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,var(--b),transparent 60%);
+  animation:burst .6s ease-out forwards
+}
+@keyframes burst{
+  from{width:0;height:0;opacity:1}
+  to{width:320px;height:320px;opacity:0}
+}
+
+/* LIVE TOAST */
+#toast{
+  position:fixed;left:20px;bottom:20px;
+  background:rgba(0,0,0,.65);
+  backdrop-filter:blur(10px);
+  border-left:3px solid var(--b);
+  padding:12px 16px;border-radius:14px;
+  box-shadow:0 0 30px rgba(0,230,255,.5);
+  opacity:0;transform:translateY(20px);
+  transition:.4s;font-size:13px
+}
+#toast.show{opacity:1;transform:translateY(0)}
+
+/* FOOTER */
+footer{text-align:center;padding:22px;font-size:13px;opacity:.65}
+</style>
+</head>
+<body>
+
+<div id="loading">
+  <h1>mdzzxiters</h1>
+  <div class="loader"></div>
+</div>
+
+<canvas id="fx"></canvas>
+
+<header>
+  <h1>mdzzxiters store <span class="badge">✔ VERIFIED</span></h1>
+  <div class="meta">
+    <div>👥 Online: <b id="users">0</b></div>
+    <div>🧾 Total Order: <b id="orders">73</b></div>
+  </div>
+</header>
+
+<section class="hero">
+  <h2>Android Panel <span>High Quality</span></h2>
+</section>
+
+<section class="products">
+
+  <div class="card">
+    <h3>ATOMIC</h3>
+    <div class="stars">★★★★★</div>
+    <div class="price">Rp80.000</div>
+    <ul>
+      <li>High Sensitivity</li><li>Aim Assist</li>
+      <li>Touch Movement High</li><li>DPI Extra</li>
+      <li>Sensitivity X Y</li>
+    </ul>
+    <button data-p="Atomic">ORDER</button>
+  </div>
+
+  <div class="card">
+    <h3>APOCALYPSE</h3>
+    <div class="stars">★★★★★</div>
+    <div class="price">Rp150.000</div>
+    <ul>
+      <li>Delete Cache</li><li>Boost Device</li>
+      <li>Aim Tracking</li><li>Stabilizer</li>
+      <li>Pointer Speed</li><li>Sensitivity Drag</li>
+    </ul>
+    <button data-p="Apocalypse">ORDER</button>
+  </div>
+
+  <div class="card premium">
+    <div class="label">PREMIUM</div>
+    <h3>BLAZE</h3>
+    <div class="stars">★★★★★</div>
+    <div class="price">Rp280.000</div>
+    <ul>
+      <li>Accuracy Hit</li><li>Reduce Recoil</li>
+      <li>Config AimHead</li><li>DragShot</li>
+      <li>Weapon Sensitivity</li><li>Aim Assist</li>
+      <li>Network Latency</li><li>Fix Lag</li>
+      <li>Stabilizer Pro</li><li>Delete Cache Auto</li>
+      <li>Reduce Delay Touch</li>
+    </ul>
+    <button data-p="Blaze">ORDER</button>
+  </div>
+
+</section>
+
+<footer>© 2023 mdzzxiter. All rights reserved.</footer>
+
+<div id="toast"></div>
+
+<script>
+/* CONFIG */
+const ADMIN="6287833947151";
+
+/* ORDER + BURST + COUNTER */
+let orders=+localStorage.getItem("orders")||0;
+document.getElementById("orders").innerText=orders;
+
+document.querySelectorAll("button").forEach(btn=>{
+  btn.onclick=e=>{
+    const b=document.createElement("span");
+    b.className="burst";
+    b.style.left=e.offsetX+"px";
+    b.style.top=e.offsetY+"px";
+    btn.appendChild(b);
+    setTimeout(()=>b.remove(),600);
+
+    orders++;localStorage.setItem("orders",orders);
+    document.getElementById("orders").innerText=orders;
+
+    window.open(`https://wa.me/${ADMIN}?text=Halo Admin mdzzxiters,%0ASaya ingin order ${btn.dataset.p}`);
+  }
+});
+
+/* USERS ONLINE */
+let users=+localStorage.getItem("users")||Math.floor(Math.random()*50)+30;
+document.getElementById("users").innerText=users;
+setInterval(()=>{
+  users+=Math.floor(Math.random()*3-1);
+  if(users<15)users=15;
+  localStorage.setItem("users",users);
+  document.getElementById("users").innerText=users;
+},2500);
+
+/* LIVE PURCHASE TOAST */
+const names=["Rizky","Adit","Fajar","Jaya","Dika","Ilham","Wandi","Fauzan","Okto","Fikri","Azam","Kamel","Reza"];
+const products=["Atomic","Apocalypse","Blaze"];
+const toast=document.getElementById("toast");
+setInterval(()=>{
+  toast.innerHTML=`🔥 <b>${names[Math.floor(Math.random()*names.length)]}</b> membeli <b>${products[Math.floor(Math.random()*products.length)]}</b>`;
+  toast.classList.add("show");
+  setTimeout(()=>toast.classList.remove("show"),3000);
+},7000);
+
+/* PARTICLE EXTREME */
+const c=document.getElementById("fx"),x=c.getContext("2d");
+c.width=innerWidth;c.height=innerHeight;
+let P=[...Array(140)].map(()=>({
+  x:Math.random()*c.width,
+  y:Math.random()*c.height,
+  vx:(Math.random()-.5)*1.8,
+  vy:(Math.random()-.5)*1.8
+}));
+(function loop(){
+  x.clearRect(0,0,c.width,c.height);
+  for(let i=0;i<P.length;i++){
+    let a=P[i];a.x+=a.vx;a.y+=a.vy;
+    if(a.x<0||a.x>c.width)a.vx*=-1;
+    if(a.y<0||a.y>c.height)a.vy*=-1;
+    x.fillStyle="#00eaff";x.fillRect(a.x,a.y,2,2);
+    for(let j=i+1;j<P.length;j++){
+      let b=P[j],d=Math.hypot(a.x-b.x,a.y-b.y);
+      if(d<170){
+        x.strokeStyle="rgba(0,240,255,.25)";
+        x.beginPath();x.moveTo(a.x,a.y);x.lineTo(b.x,b.y);x.stroke();
+      }
+    }
+  }
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
